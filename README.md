@@ -10,14 +10,25 @@ Below is provided an example DAG for the project:
 
  Locations for the datasets for the project:
 
-Log data: *s3://udacity-dend/log_data*
-Song data: *s3://udacity-dend/song-data*
+- Log data: *s3://udacity-dend/log_data*
+- Song data: *s3://udacity-dend/song-data*
 
-Start from copying the data into your own S3 bucket from the same region:
+Copy the data from the udacity bucket to the home cloudshell directory:
 
-*aws s3 cp s3://udacity-dend/log-data/ ~/log-data/ --recursive
+```bash
+aws s3 cp s3://udacity-dend/log-data/ ~/log-data/ --recursive
 aws s3 cp s3://udacity-dend/song-data/ ~/song-data/ --recursive
-aws s3 cp s3://udacity-dend/log_json_path.json ~/*
+aws s3 cp s3://udacity-dend/log_json_path.json ~/
+```
+Copy the data from the home cloudshell directory to your own bucket -- this is only an example:
 
+```bash
+aws s3 cp ~/log-data/ s3://kgolovko-data-pipelines/log-data/ --recursive
+aws s3 cp ~/song-data/ s3://kgolovko-data-pipelines/song-data/ --recursive
+aws s3 cp ~/log_json_path.json s3://kgolovko-data-pipelines/
+```
+List the data in your own bucket to be sure it copied over:
 
-
+```bash
+aws s3 ls s3://kgolovko-data-pipelines/log-data/
+```
