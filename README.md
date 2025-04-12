@@ -32,3 +32,11 @@ List the data in your own bucket to be sure it copied over:
 ```bash
 aws s3 ls s3://kgolovko-data-pipelines/log-data/
 ```
+To check issues during the loading process in Redshift, use the below command in Redshift editor (connect using the user and password during the Redshift creation):
+
+```bash
+SELECT * 
+FROM SYS_LOAD_ERROR_DETAIL
+ORDER BY start_time DESC
+LIMIT 10;
+```
