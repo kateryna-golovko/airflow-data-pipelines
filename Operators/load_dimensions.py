@@ -58,7 +58,7 @@ class LoadDimensionOperator(BaseOperator):
         # After truncation (or if truncate is disabled), load the new data
         self.log.info(f"Inserting new data into {self.target_table}")
         # The SQL query to load data into the dimension table
-        rendered_sql = self.sql_query.format(target_table=self.target_table)
-        redshift.run(rendered_sql)
+        insert_statement = f"INSERT INTO {self.target_table} \n{self.sql_query}"
+        redshift.run(insert_statement)
 
         self.log.info(f"Data successfully loaded into {self.target_table}")

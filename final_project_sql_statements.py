@@ -11,14 +11,14 @@ class SqlQueries:
             gender varchar(50),
             iteminsession bigint,
             lastname varchar(255),
-            length numeric,
+            length NUMERIC(10, 3),
             level varchar(50),
             location varchar(500),
             method varchar(50),
             page varchar(100),
             registration numeric,
             sessionid bigint,
-            song varchar(255),
+            song varchar(500),
             status int,
             ts bigint,
             useragent varchar(500),
@@ -31,14 +31,14 @@ class SqlQueries:
 
         CREATE TABLE staging_songs (
             num_songs int,
-            artist_id varchar(255),
-            artist_latitude varchar(255),
-            artist_longitude varchar(255),
+            artist_id varchar(500),
+            artist_latitude varchar(500),
+            artist_longitude varchar(500),
             artist_location varchar(500),
-            artist_name varchar(255),
-            song_id varchar(255),
-            title varchar(255),
-            duration float,
+            artist_name varchar(500),
+            song_id varchar(500),
+            title varchar(500),
+            duration NUMERIC(10, 3),
             year int 
         );
     """)
@@ -51,8 +51,8 @@ class SqlQueries:
             start_time timestamp NOT NULL, 
             userid bigint NOT NULL, 
             level varchar(100), 
-            song_id varchar(255) NOT NULL, 
-            artist_id varchar(255) NOT NULL, 
+            song_id varchar(500) NOT NULL, 
+            artist_id varchar(500) NOT NULL, 
             sessionid bigint NOT NULL, 
             location varchar(500), 
             useragent varchar(500)    
@@ -64,8 +64,8 @@ class SqlQueries:
 
         CREATE TABLE user_info (
             userid bigint PRIMARY KEY,
-            firstname varchar(255),
-            lastname varchar(255),
+            firstname varchar(500),
+            lastname varchar(500),
             gender varchar(50),
             level varchar(50)
         );
@@ -75,9 +75,9 @@ class SqlQueries:
         DROP TABLE IF EXISTS song;
 
         CREATE TABLE song (
-            song_id varchar(255) PRIMARY KEY,
-            title varchar(255),
-            artist_id varchar(255),
+            song_id varchar(500) PRIMARY KEY,
+            title varchar(500),
+            artist_id varchar(500),
             year int,
             duration float
         );
@@ -87,11 +87,11 @@ class SqlQueries:
         DROP TABLE IF EXISTS artist;
 
         CREATE TABLE artist (
-            artist_id varchar(255) PRIMARY KEY,
-            artist_name varchar(255),
+            artist_id varchar(500) PRIMARY KEY,
+            artist_name varchar(500),
             artist_location varchar(500),
-            artist_latitude float,
-            artist_longitude float
+            artist_latitude varchar(500),
+            artist_longitude varchar(500)
         );
     """)
 
@@ -152,6 +152,7 @@ class SqlQueries:
             ON events.song = songs.title
                 AND events.artist = songs.artist_name
                 AND events.length = songs.duration
+            WHERE songs.song_id IS NOT NULL
     """)
 
     user_table_insert = ("""
@@ -173,5 +174,5 @@ class SqlQueries:
     time_table_insert = ("""
         SELECT start_time, extract(hour from start_time), extract(day from start_time), extract(week from start_time), 
                extract(month from start_time), extract(year from start_time), extract(dayofweek from start_time)
-        FROM songplays
+        FROM songplay
     """)

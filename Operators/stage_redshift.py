@@ -59,11 +59,11 @@ class StageToRedshiftOperator(BaseOperator):
             raise ValueError(f"Unknown staging table: {self.table}")
 
         self.log.info(f"Dropping and recreating staging table: {self.table}")
-        redshift.run(f"DROP TABLE IF EXISTS {self.table}")
+        #redshift.run(f"DROP TABLE IF EXISTS {self.table}")
         redshift.run(create_sql)
 
-        self.log.info(f"Clearing data from destination Redshift table: {self.table}")
-        redshift.run(f"DELETE FROM {self.table}")
+        #self.log.info(f"Clearing data from destination Redshift table: {self.table}")
+        #redshift.run(f"DELETE FROM {self.table}")
 
         # Render the S3 key with Airflow templating (already marked as a template field)
         rendered_key = self.s3_key.format(**context)
@@ -72,10 +72,14 @@ class StageToRedshiftOperator(BaseOperator):
 
         # Determine JSON path format
         # Only override if json_path is not provided
-        if self.json_path:
-            json_paths = f"s3://{self.s3_bucket}/{self.json_path}"
-        else:
+        # Determine JSON path format
+        # Supports full S3 path or relative path
+        if self.json_path.lower() == "auto":
             json_paths = "auto"
+        elif self.json_path.startswith("s3://"):
+            json_paths = self.json_path
+        else:
+            json_paths = f"s3://{self.s3_bucket}/{self.json_path}"
 
         self.log.info(f"Using JSON format: {json_paths}")
 
@@ -98,6 +102,7 @@ class StageToRedshiftOperator(BaseOperator):
         except Exception as e:
             self.log.error(f"Error executing COPY command: {e}")
             raise
+
 
 
 

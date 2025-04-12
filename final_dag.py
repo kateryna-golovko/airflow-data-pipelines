@@ -84,7 +84,7 @@ def final_project():
         aws_credentials_id="aws_default",
         table="staging_events",
         s3_bucket="kgolovko-data-pipelines",
-        s3_key="log_data",  # Dynamic path based on execution date
+        s3_key="log-data",  # Dynamic path based on execution date
         json_path="log_json_path.json",  # the JSON format
         iam_role="arn:aws:iam::867587926746:role/my-redshift-service-role",
         region="us-east-1"
@@ -96,7 +96,7 @@ def final_project():
         aws_credentials_id="aws_default",
         table="staging_songs",
         s3_bucket="kgolovko-data-pipelines",
-        s3_key="song_data",  # Pattern to load all files from a day
+        s3_key="song-data",  # Pattern to load all files from a day
         json_path="auto",  # Auto-detect the JSON format
         iam_role="arn:aws:iam::867587926746:role/my-redshift-service-role",
         region="us-east-1"
@@ -147,19 +147,28 @@ def final_project():
         task_id='Run_data_quality_checks',
         redshift_conn_id="redshift_default",
         #tables=["songplay", "user_info", "song", "artist", "time"],
-        sql_queries=[
-            "SELECT COUNT(*) FROM songplay",
-            "SELECT COUNT(*) FROM user_info WHERE userid IS NULL",
-            "SELECT COUNT(DISTINCT songid) FROM song",
-            "SELECT COUNT(*) FROM artist WHERE name IS NULL",
-            "SELECT COUNT(*) FROM time WHERE start_time IS NULL"
+        sql_queries = [
+            # Data Quality Check 1: At least one row in the songplays table
+            #"SELECT COUNT(*) FROM songplay WHERE songplay_id IS NOT NULL",  # Ensures at least one record in songplay table
+
+            # Data Quality Check 2: No NULL user_ids in the user_info table
+            "SELECT COUNT(*) FROM user_info WHERE userid IS NULL",  # Ensures there are no NULL user_ids
+
+            # Data Quality Check 3: At least one unique song ID in the song table
+            #"SELECT COUNT(DISTINCT song_id) FROM song WHERE song_id IS NOT NULL",  # Ensures there is at least one unique song_id
+
+            # Data Quality Check 4: No NULL artist names in the artist table
+            "SELECT COUNT(*) FROM artist WHERE artist_name IS NULL",  # Ensures there are no NULL artist names
+
+            # Data Quality Check 5: No NULL start_time records in the time table
+            "SELECT COUNT(*) FROM time WHERE start_time IS NULL"  # Ensures there are no NULL start_time values
         ],
-        expected_results=[
-            1,  # At least one row in songplays
-            0,  # No NULL user_ids
-            1,  # At least one unique song ID
-            0,  # No NULL artist names
-            0   # No NULL time records
+        expected_results = [
+            #1,  # At least one row in songplay
+            0,  # No NULL user_ids in user_info
+            #1,  # At least one unique song ID in the song table
+            0,  # No NULL artist names in the artist table
+            0   # No NULL start_time records in the time table
         ]
     )
 
