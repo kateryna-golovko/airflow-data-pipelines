@@ -1,6 +1,22 @@
 class SqlQueries:
-    # CREATE TABLES
-    # Create emoty staging and final tables with column names and types defined
+    """
+        Purpose of the class:
+            - Define all CREATE SQL statements used in the ETL pipeline for creating staging, fact and dimension tables and inserting data into fact and dimension tables.
+        Inputs:
+            - None 
+        Outputs:
+            - This script will be used in the final_project.py DAG script and in stage_redshift.py, load_fact.py and load_dimension.py operators scripts. These scripts contain operators: StageToRedshiftOperator, LoadFactOperator, and LoadDimensionOperator.
+        Functionality:
+            - Contains SQL definitions to:
+                - Create staging, fact, and dimension tables.
+                - Load data from S3 into Redshift staging tables - used for reference only.
+                - Insert data from staging into final tables.
+    """
+
+    """
+        CREATE TABLES
+        Create staging and final tables with column names and types defined
+    """
     staging_events_table_create = ("""
         DROP TABLE IF EXISTS staging_events;
 
@@ -44,8 +60,6 @@ class SqlQueries:
     """)
 
     songplay_table_create = ("""
-        DROP TABLE IF EXISTS songplay;
-
         CREATE TABLE songplay (
             songplay_id varchar(32) PRIMARY KEY, 
             start_time timestamp NOT NULL, 
@@ -60,8 +74,6 @@ class SqlQueries:
     """)
 
     user_table_create = ("""
-        DROP TABLE IF EXISTS user_info;
-
         CREATE TABLE user_info (
             userid bigint PRIMARY KEY,
             firstname varchar(500),
@@ -72,8 +84,6 @@ class SqlQueries:
     """)
 
     song_table_create = ("""
-        DROP TABLE IF EXISTS song;
-
         CREATE TABLE song (
             song_id varchar(500) PRIMARY KEY,
             title varchar(500),
@@ -84,8 +94,6 @@ class SqlQueries:
     """)
 
     artist_table_create = ("""
-        DROP TABLE IF EXISTS artist;
-
         CREATE TABLE artist (
             artist_id varchar(500) PRIMARY KEY,
             artist_name varchar(500),
@@ -96,8 +104,6 @@ class SqlQueries:
     """)
 
     time_table_create = ("""
-        DROP TABLE IF EXISTS time;
-
         CREATE TABLE time (
             start_time timestamp PRIMARY KEY,
             hour int,
@@ -109,11 +115,13 @@ class SqlQueries:
         );
     """)
 
-    # STAGING TABLES
-    # Load the data from the S3 bucket into the staging tables, specify IAM role for S3 Read access for Redshift
-    # Specify that the file is JSON format
-    # The invalid characters will be replaced with '?' during loading to avoid failed load
-    # Modify the SQL COPY statements to use dynamic parameters
+    """
+        STAGING TABLES - USE FOR REFERRENCE ONLY - Taken from the project 2
+            - Load the data from the S3 bucket into the staging tables, specify IAM role for S3 Read access for Redshift
+            - Specify that the file is JSON format
+            - The invalid characters will be replaced with '?' during loading to avoid failed load
+            - Modify the SQL COPY statements to use dynamic parameters
+    """
     staging_events_copy = ("""
         COPY staging_events FROM 's3://kgolovko-data-pipelines/log-data/'
         CREDENTIALS 'aws_iam_role={aws_iam_role}'
@@ -131,9 +139,10 @@ class SqlQueries:
     """)
 
 
-
-    #INSERT DATA
-    # Load data from staging tables into the final tables within Redshift
+    """
+        INSERT DATA
+        Load data from staging tables into the final tables within Redshift
+    """
     songplay_table_insert = ("""
         SELECT
                 md5(events.sessionid || events.start_time) songplay_id,
